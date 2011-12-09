@@ -19,7 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @author Philippe Gerber <philippe@bigwhoop.ch>
  */
-class InformationStep implements StepInterface
+class InformationTask implements TaskInterface
 {
     /**
      * @var string

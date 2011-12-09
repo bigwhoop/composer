@@ -16,7 +16,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Composer\Config;
 use Composer\Setup\Worker;
-use Composer\Setup\StepFactory;
+use Composer\Setup\TaskFactory;
 
 /**
  * @author Philippe Gerber <philippe@bigwhoop.ch>
@@ -50,11 +50,11 @@ EOT;
 
         $worker = new Worker();
 
-        foreach ((array)$config->get('setup') as $stepData) {
-            $stepConfig = new Config($stepData);
-            $step = StepFactory::factory($stepConfig);
+        foreach ((array)$config->get('setup') as $data) {
+            $taskConfig = new Config($data);
+            $task = TaskFactory::factory($taskConfig);
 
-            $worker->addStep($step);
+            $worker->addTask($task);
         }
 
 

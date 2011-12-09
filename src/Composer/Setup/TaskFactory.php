@@ -13,15 +13,17 @@
 namespace Composer\Setup;
 
 use Composer\Config;
+use Composer\Setup\Validator\ValidatorFactory;
 
 /**
  * @author Philippe Gerber <philippe@bigwhoop.ch>
  */
-class StepFactory
+class TaskFactory
 {
     /**
      * @param Config $config
-     * @return StepInterface
+     * @return TaskInterface
+     * @throws \OutOfBoundsException
      */
     static public function factory(Config $config)
     {
@@ -30,12 +32,17 @@ class StepFactory
         switch ($type)
         {
             case 'question':
-                return new QuestionStep($config->get('question'), $config->get('variable'));
+                $validators = array();
+                foreach ((array)$config->get('validators', array()) as $validatorName) {
+                    $validators[] = ValidatorFactory::factory($validatorName);
+                }
+
+                return new QuestionTask($config->get('question'), $config->get('variable'), $validators);
 
             case 'info':
-                return new InformationStep($config->get('text'));
+                return new InformationTask($config->get('text'));
 
-            default : throw new \OutOfBoundsException("Invalid step type '{$type}'.");
+            default : throw new \OutOfBoundsException("Invalid task type '{$type}'.");
         }
     }
 }

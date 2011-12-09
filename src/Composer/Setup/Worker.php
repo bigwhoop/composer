@@ -24,7 +24,7 @@ class Worker
     /**
      * @var array
      */
-    private $steps = array();
+    private $tasks = array();
 
     /**
      * @var array
@@ -33,12 +33,12 @@ class Worker
 
 
     /**
-     * @param StepInterface $step
+     * @param TaskInterface $task
      * @return Worker
      */
-    public function addStep(StepInterface $step)
+    public function addTask(TaskInterface $task)
     {
-        $this->steps[] = $step;
+        $this->tasks[] = $task;
         return $this;
     }
 
@@ -82,11 +82,14 @@ class Worker
     /**
      * @param \Symfony\Component\Console\Input\InputInterface $input
      * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @return Worker
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        foreach ($this->steps as $step) {
-            $step->execute($this, $input, $output);
+        foreach ($this->tasks as $task) {
+            $task->execute($this, $input, $output);
         }
+
+        return $this;
     }
 }
