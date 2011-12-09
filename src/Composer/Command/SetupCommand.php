@@ -14,6 +14,9 @@ namespace Composer\Command;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Composer\Config;
+use Composer\Setup\Worker;
+use Composer\Setup\StepFactory;
 
 /**
  * @author Philippe Gerber <philippe@bigwhoop.ch>
@@ -42,7 +45,19 @@ EOT;
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $config = $this->getComposer()->getConfig();
-        var_dump($config);
+        $composer = $this->getComposer();
+        $config   = $composer->getConfig();
+
+        $worker = new Worker();
+
+        foreach ((array)$config->get('setup') as $stepData) {
+            $stepConfig = new Config($stepData);
+            $step = StepFactory::factory($stepConfig);
+
+            $worker->addStep($step);
+        }
+
+
+        $worker->execute($input, $output);
     }
 }
