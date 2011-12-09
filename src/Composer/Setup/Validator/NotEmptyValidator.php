@@ -15,7 +15,7 @@ namespace Composer\Setup\Validator;
 /**
  * @author Philippe Gerber <philippe@bigwhoop.ch>
  */
-class NotEmptyValidator implements ValidatorInterface
+class NotEmptyValidator extends AbstractValidator
 {
     /**
      * @param mixed $value

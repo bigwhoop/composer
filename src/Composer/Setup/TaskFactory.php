@@ -37,7 +37,12 @@ class TaskFactory
                     $validators[] = ValidatorFactory::factory($validatorName);
                 }
 
-                return new QuestionTask($config->get('question'), $config->get('variable'), $validators);
+                return new QuestionTask(
+                    $config->get('question'),
+                    $config->get('variable'),
+                    $validators,
+                    $config->get('default')
+                );
 
             case 'info':
                 return new InformationTask($config->get('text'));

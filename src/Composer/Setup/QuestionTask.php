@@ -16,6 +16,7 @@ use Composer\Config;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Composer\Setup\Validator\ValidatorInterface;
+use Composer\Setup\Validator\NotEmptyValidator;
 
 /**
  * @author Philippe Gerber <philippe@bigwhoop.ch>
@@ -37,19 +38,30 @@ class QuestionTask implements TaskInterface
      */
     private $validators = array();
 
+    /**
+     * @var false|string
+     */
+    private $default = false;
+
 
     /**
      * @param string $question
      * @param string $variable
      * @param array $validators        Array of ValidatorInterface objects
+     * @param string|false $default
      */
-    public function __construct($question, $variable, array $validators = array())
+    public function __construct($question, $variable, array $validators = array(), $default = false)
     {
         $this->question = (string)$question;
         $this->variable = (string)$variable;
 
         foreach ($validators as $validator) {
             $this->addValidator($validator);
+        }
+
+        $default = trim($default);
+        if (!empty($default)) {
+            $this->default = (string)$default;
         }
     }
 
@@ -84,12 +96,24 @@ class QuestionTask implements TaskInterface
             return true;
         };
 
+        $question = $this->question . ' ';
+        if ($this->default !== false) {
+            $question .= "[default: {$this->default}] ";
+        }
+
         do {
-            $output->write($this->question . ' ');
+            $output->write($question);
             $data = fgets(STDIN, 1024);
             $data = trim($data);
         }
         while (!$condition($data));
+
+        if ($this->default !== false) {
+            $notEmptyValidator = new NotEmptyValidator();
+            if (!$notEmptyValidator->isValid($data)) {
+                $data = $this->default;
+            }
+        }
 
         $worker->setVariable($this->variable, $data);
     }
