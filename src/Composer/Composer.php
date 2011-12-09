@@ -17,14 +17,18 @@ use Composer\Package\Locker;
 use Composer\Repository\RepositoryManager;
 use Composer\Installer\InstallationManager;
 use Composer\Downloader\DownloadManager;
+use Composer\Config;
 
 /**
  * @author Jordi Boggiano <j.boggiano@seld.be>
  * @author Konstantin Kudryashiv <ever.zet@gmail.com>
+ * @author Philippe Gerber <philippe@bigwhoop.ch>
  */
 class Composer
 {
     const VERSION = '@package_version@';
+
+    private $config;
 
     private $package;
     private $locker;
@@ -32,6 +36,36 @@ class Composer
     private $repositoryManager;
     private $downloadManager;
     private $installationManager;
+
+
+    /**
+     * @param Config $config
+     */
+    public function __construct(Config $config)
+    {
+        $this->setConfig($config);
+    }
+
+
+    /**
+     * @param Config $config
+     * @return Composer
+     */
+    public function setConfig(Config $config)
+    {
+        $this->config = $config;
+        return $this;
+    }
+
+
+    /**
+     * @return Config
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
 
     public function setPackage(PackageInterface $package)
     {

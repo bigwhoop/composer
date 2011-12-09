@@ -21,6 +21,7 @@ use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Finder\Finder;
 use Composer\Command;
 use Composer\Composer;
+use Composer\Config;
 use Composer\Installer;
 use Composer\Downloader;
 use Composer\Repository;
@@ -78,47 +79,57 @@ class Application extends BaseApplication
         return $this->composer;
     }
 
+
     /**
-     * Bootstraps a Composer instance
-     *
-     * @return Composer
+     * @param null|string $composerFile
+     * @return \Composer\Config
      */
-    public static function bootstrapComposer($composerFile = null)
+    static private function getConfigurationFile($composerFile = null)
     {
         // load Composer configuration
         if (null === $composerFile) {
-            $composerFile = getenv('COMPOSER') ?: 'composer.json';
+            $composerFile = getenv('COMPOSER') ? : 'composer.json';
         }
 
         $file = new JsonFile($composerFile);
         if (!$file->exists()) {
             if ($composerFile === 'composer.json') {
-                echo 'Composer could not find a composer.json file in '.getcwd().PHP_EOL;
+                echo 'Composer could not find a composer.json file in ' . getcwd() . PHP_EOL;
             } else {
-                echo 'Composer could not find the config file: '.$composerFile.PHP_EOL;
+                echo 'Composer could not find the config file: ' . $composerFile . PHP_EOL;
             }
-            echo 'To initialize a project, please create a composer.json file as described on the http://packagist.org/ "Getting Started" section'.PHP_EOL;
+            echo 'To initialize a project, please create a composer.json file as described on the http://packagist.org/ "Getting Started" section' . PHP_EOL;
             exit(1);
         }
 
+        return new Config($file->read());
+    }
+
+
+    /**
+     * Bootstraps a Composer instance
+     *
+     * @param string|null $composerFile
+     * @return Composer
+     */
+    public static function bootstrapComposer($composerFile = null)
+    {
         // Configuration defaults
-        $composerConfig = array(
-            'vendor-dir' => 'vendor',
-        );
+        $config = new Config(array(
+            'config' => array(
+                'vendor-dir' => 'vendor',
+            ),
+        ));
 
-        $packageConfig = $file->read();
+        $packageConfig = self::getConfigurationFile($composerFile);
+        $config->merge($packageConfig);
 
-        if (isset($packageConfig['config']) && is_array($packageConfig['config'])) {
-            $packageConfig['config'] = array_merge($composerConfig, $packageConfig['config']);
-        } else {
-            $packageConfig['config'] = $composerConfig;
+        $vendorDir = $config->get('config/vendor-dir');
+
+        if (!$config->has('config/bin-dir')) {
+            $config->set('config/bin-dir', $vendorDir.'/bin');
         }
-
-        $vendorDir = $packageConfig['config']['vendor-dir'];
-        if (!isset($packageConfig['config']['bin-dir'])) {
-            $packageConfig['config']['bin-dir'] = $vendorDir.'/bin';
-        }
-        $binDir = $packageConfig['config']['bin-dir'];
+        $binDir = $config->get('config/bin-dir');
 
         // initialize repository manager
         $rm = new Repository\RepositoryManager();
@@ -143,10 +154,10 @@ class Application extends BaseApplication
 
         // load package
         $loader  = new Package\Loader\ArrayLoader($rm);
-        $package = $loader->load($packageConfig);
+        $package = $loader->load($config->getData());
 
         // load default repository unless it's explicitly disabled
-        if (!isset($packageConfig['repositories']['packagist']) || $packageConfig['repositories']['packagist'] !== false) {
+        if (!$config->has('repositories/packagist') || $config->get('repositories/packagist') !== false) {
             $rm->addRepository(new Repository\ComposerRepository(array('url' => 'http://packagist.org')));
         }
 
@@ -155,7 +166,7 @@ class Application extends BaseApplication
         $locker = new Package\Locker(new JsonFile($lockFile), $rm);
 
         // initialize composer
-        $composer = new Composer();
+        $composer = new Composer($config);
         $composer->setPackage($package);
         $composer->setLocker($locker);
         $composer->setRepositoryManager($rm);
@@ -172,6 +183,7 @@ class Application extends BaseApplication
     {
         $this->add(new Command\AboutCommand());
         $this->add(new Command\InstallCommand());
+        $this->add(new Command\SetupCommand());
         $this->add(new Command\UpdateCommand());
         $this->add(new Command\DebugPackagesCommand());
         $this->add(new Command\SearchCommand());
