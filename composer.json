@@ -29,44 +29,5 @@
     "autoload": {
         "psr-0": { "Composer": "src/" }
     },
-    "bin": ["bin/composer"],
-    "setup": [
-        {
-            "type" : "info",
-            "text" : "DATABASE SETUP\n--------------"
-        },
-        {
-            "type"     : "question",
-            "question" : "Database Name:",
-            "variable" : "db_name",
-            "default"  : "test_db"
-        },
-        {
-            "type"     : "question",
-            "question" : "User Name:",
-            "variable" : "db_user",
-            "default"  : "test_usr"
-        },
-        {
-            "type"       : "question",
-            "question"   : "Password:",
-            "variable"   : "db_pass",
-            "validators" : [
-                "notEmpty"
-            ]
-        },
-        {
-            "type" : "info",
-            "text" : "Saving database config for '%db_name%' using '%db_user%' and '%db_pass%'."
-        },
-        {
-            "type"        : "copyFile",
-            "source"      : "config.php.dist",
-            "destination" : "config.php"
-        },
-        {
-            "type"   : "replacePlaceholders",
-            "source" : "config.php"
-        }
-    ]
+    "bin": ["bin/composer"]
 }
