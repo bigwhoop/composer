@@ -57,7 +57,16 @@
         },
         {
             "type" : "info",
-            "text" : "Setting up database '%db_name%' for '%db_user%' / '%db_pass%'."
+            "text" : "Saving database config for '%db_name%' using '%db_user%' and '%db_pass%'."
+        },
+        {
+            "type"        : "copyFile",
+            "source"      : "config.php.dist",
+            "destination" : "config.php"
+        },
+        {
+            "type"   : "replacePlaceholders",
+            "source" : "config.php"
         }
     ]
 }

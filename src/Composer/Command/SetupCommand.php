@@ -16,7 +16,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Composer\Config;
 use Composer\Setup\Worker;
-use Composer\Setup\TaskFactory;
+use Composer\Setup\Task\TaskFactory;
 
 /**
  * @author Philippe Gerber <philippe@bigwhoop.ch>

@@ -10,9 +10,10 @@
  * file that was distributed with this source code.
  */
 
-namespace Composer\Setup;
+namespace Composer\Setup\Task;
 
 use Composer\Config;
+use Composer\Setup\Worker;
 use Composer\Setup\Validator\ValidatorFactory;
 
 /**
@@ -46,6 +47,12 @@ class TaskFactory
 
             case 'info':
                 return new InformationTask($config->get('text'));
+
+            case 'copyFile':
+                return new CopyFileTask($config->get('source'), $config->get('destination'));
+
+            case 'replacePlaceholders':
+                return new ReplacePlaceholdersTask($config->get('source'));
 
             default : throw new \OutOfBoundsException("Invalid task type '{$type}'.");
         }

@@ -10,9 +10,10 @@
  * file that was distributed with this source code.
  */
 
-namespace Composer\Setup;
+namespace Composer\Setup\Task;
 
 use Composer\Config;
+use Composer\Setup\Worker;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Composer\Setup\Validator\ValidatorInterface;

@@ -10,45 +10,23 @@
  * file that was distributed with this source code.
  */
 
-namespace Composer\Setup;
+namespace Composer\Setup\Task;
 
 use Composer\Config;
+use Composer\Setup\Worker;
+use Composer\Setup\Task\TaskInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * @author Philippe Gerber <philippe@bigwhoop.ch>
  */
-class InformationTask implements TaskInterface
+interface TaskInterface
 {
-    /**
-     * @var string
-     */
-    private $text;
-
-
-    /**
-     * @param string $text
-     */
-    public function __construct($text)
-    {
-        $this->text = (string)$text;
-    }
-
-
     /**
      * @param Worker $worker
      * @param \Symfony\Component\Console\Input\InputInterface $input
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      */
-    public function execute(Worker $worker, InputInterface $input, OutputInterface $output)
-    {
-        $text = $this->text;
-
-        foreach ($worker->getVariables() as $key => $value) {
-            $text = str_replace("%$key%", $value, $text);
-        }
-
-        $output->writeln($text);
-    }
+    public function execute(Worker $worker, InputInterface $input, OutputInterface $output);
 }

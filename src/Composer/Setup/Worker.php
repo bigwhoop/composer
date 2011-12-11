@@ -13,6 +13,7 @@
 namespace Composer\Setup;
 
 use Composer\Config;
+use Composer\Setup\Task\TaskInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
