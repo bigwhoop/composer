@@ -1,31 +1,4 @@
 {
-    "name": "composer/composer",
-    "description": "Package Manager",
-    "keywords": ["package", "dependency", "autoload"],
-    "homepage": "http://getcomposer.org/",
-    "type": "library",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Nils Adermann",
-            "email": "naderman@naderman.de",
-            "homepage": "http://www.naderman.de"
-        },
-        {
-            "name": "Jordi Boggiano",
-            "email": "j.boggiano@seld.be",
-            "homepage": "http://seld.be"
-        }
-    ],
-    "require": {
-        "php": ">=5.3.0",
-        "symfony/console": ">2.0,<2.2-dev",
-        "symfony/finder": ">2.0,<2.2-dev",
-        "symfony/process": ">2.0,<2.2-dev"
-    },
-    "recommend": {
-        "ext-zip": "*"
-    },
     "autoload": {
         "psr-0": { "Composer": "../../../src/" }
     },
